@@ -545,6 +545,21 @@ class TestCreateBillingConfiguration(SellerProductBangoBase):
         eq_(transaction.seller, self.seller)
         eq_(transaction.buyer, self.buyer)
 
+    def test_buyer_created_when_transaction_started(self):
+        buyer_uuid = 'new-user'
+        transaction_data = self.good()
+        transaction_data['user_uuid'] = buyer_uuid
+        res = self.client.post(self.list_url, data=transaction_data)
+        eq_(res.status_code, 201, res.content)
+        assert 'billingConfigurationId' in json.loads(res.content)
+        assert 'application_size' not in json.loads(res.content)
+
+        transaction = Transaction.objects.get()
+        buyer = Buyer.objects.get(uuid=buyer_uuid)
+
+        eq_(transaction.seller, self.seller)
+        eq_(transaction.buyer, buyer)
+
     def test_twice(self):
         data = self.good()
         eq_(self.client.post(self.list_url, data=data).status_code, 201)

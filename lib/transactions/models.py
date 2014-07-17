@@ -151,7 +151,7 @@ def create_bango_transaction(sender, **kwargs):
     data = kwargs['data']
     form = kwargs['form']
     buyer_uuid = form.cleaned_data['user_uuid']
-    buyer = Buyer.objects.get(uuid=buyer_uuid)
+    buyer, created = Buyer.objects.get_or_create(uuid=buyer_uuid)
     seller = form.cleaned_data['seller_product_bango'].seller_bango.seller
     seller_product = form.cleaned_data['seller_product_bango'].seller_product
 
